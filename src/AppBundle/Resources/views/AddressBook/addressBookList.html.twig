@@ -1,0 +1,98 @@
+{% extends "base.html.twig" %}
+
+{% block title %}Addressbook{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+
+    <style>
+        .img-thumbnail{
+            max-width: 70px;
+        }
+
+    </style>
+
+{% endblock %}
+
+{% block body %}
+
+    <div class="row">
+
+        <div class="col-md-4"><h1>Addressbook</h1></div>
+        <div class="col-md-5"></div>
+        <div class="col-md-3"> <a href="{{ path('InsertEntry') }}"><h3>Add an entry  </h3></a></div>
+    </div>
+
+    </br>
+
+
+
+    {% for label,  messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label }}">
+                <strong>{{ message }}</strong>
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+
+    <table class="table table-hover">
+    <thead>
+    <tr>
+        <th>Firstname</th>
+        <th>Lastname</th>
+        <th>City</th>
+        <th>Country</th>
+        <th>Email</th>
+        <th>Picture</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for  addressbook in addressbooks %}
+        <tr>
+            <td>{{ addressbook.firstname }}</td>
+            <td>{{ addressbook.lastname }}</td>
+            <td>{{ addressbook.city }}</td>
+            <td>{{ addressbook.country }}</td>
+            <td>{{ addressbook.email }}</td>
+            <td>
+                {% if addressbook.picture is not empty %}
+                    <img src="{{ asset('uploads/' ~ addressbook.picture) }}" class="img-thumbnail" >
+                {% else %}
+                    <img src="{{ asset('uploads/default.jpeg') }}" class="img-thumbnail" >
+                {% endif %}
+            </td>
+            <td>
+                <a href="{{ path('EditEntry', {'id':addressbook.id}) }}"> <button class="btn btn-default">Edit</button>  </a>
+                <a href="{{ path('DeleteEntry', {'id':addressbook.id}) }}"> <button class="btn btn-danger">Delete</button>  </a>
+
+            </td>
+        </tr>
+    {% endfor %}
+
+    </tbody>
+    </table>
+
+
+
+    {% if maxPages > 1 %}
+        <ul class="pagination pagination-sm">
+
+            <li {{ thisPage == 1 ? 'class="disabled"' }}>
+                <a href="{{ path('ListAddressBook', {'page': thisPage-1 < 1 ? 1 : thisPage-1}) }}">«</a>
+            </li>
+
+            {% for i in 1..maxPages %}
+                <li {{ thisPage == i ? 'class="active"' }}>
+                    <a href="{{ path('ListAddressBook', {'page': i}) }}">{{ i }}</a>
+                </li>
+            {% endfor %}
+
+            <li {{ thisPage == maxPages ? 'class="disabled"' }}>
+                <a href="{{ path('ListAddressBook', {'page': thisPage+1 <= maxPages ? thisPage+1 : thisPage}) }}">»</a>
+            </li>
+        </ul>
+    {% endif %}
+
+{% endblock %}
